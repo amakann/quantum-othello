@@ -104,7 +104,12 @@ function animate(currentTime) {
 
     // 盤面状態の更新（補間）
     let needsUpdate = false;
-    const speed = 2.0; // 変化の速度
+    // 変化の速度を大幅に下げる (2.0 -> 0.05)
+    // deltaTime は通常 0.016s (60fps)
+    // 0.05 * 60 = 3.0 (フレームあたりの変化率係数) ではなく、
+    // 単純に lerp 係数として扱う: current = current + (target - current) * factor
+    // factor = 0.05 (毎フレーム 5% ずつ目標に近づく = 非常に滑らか)
+    const smoothingFactor = 0.05;
 
     for (let y = 0; y < GRID_SIZE; y++) {
         for (let x = 0; x < GRID_SIZE; x++) {
@@ -112,13 +117,13 @@ function animate(currentTime) {
             if (cell !== EMPTY) {
                 // 目標値に向かって少しずつ変化させる
                 const diff = cell.targetCyan - cell.currentCyan;
-                if (Math.abs(diff) > 0.001) {
+                if (Math.abs(diff) > 0.0001) { // 閾値をより細かく
                     // 指数関数的な接近 (Ease-out effect)
-                    // または線形補間: cell.currentCyan += Math.sign(diff) * speed * deltaTime;
-                    cell.currentCyan += diff * speed * (deltaTime * 60 || 1) * 0.1;
+                    // 毎フレーム、残りの距離の 5% ずつ進む
+                    cell.currentCyan += diff * smoothingFactor;
                     
-                    // 行き過ぎ防止
-                    if (Math.abs(cell.targetCyan - cell.currentCyan) < 0.001) {
+                    // 行き過ぎ防止 & 完了判定
+                    if (Math.abs(cell.targetCyan - cell.currentCyan) < 0.0001) {
                         cell.currentCyan = cell.targetCyan;
                     }
                     needsUpdate = true;
