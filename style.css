@@ -9,37 +9,43 @@ body {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: #fff;
+    padding: 10px;
 }
 
 .game-container {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
+    width: 100%;
+    max-width: 700px;
 }
 
 h1 {
-    margin-bottom: 20px;
-    font-size: 2rem;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    word-wrap: break-word;
 }
 
 .game-info {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .player-info {
     display: flex;
     justify-content: center;
-    gap: 50px;
-    font-size: 1.5rem;
+    gap: 20px;
+    font-size: 1.2rem;
+    flex-wrap: wrap;
 }
 
 .player-cyan {
     color: #00ffff;
     text-shadow: 0 0 5px #00ffff;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.3s ease;
     opacity: 0.5;
@@ -48,7 +54,7 @@ h1 {
 .player-yellow {
     color: #ffff00;
     text-shadow: 0 0 5px #ffff00;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.3s ease;
     opacity: 0.5;
@@ -71,24 +77,30 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
 }
 
 #gameCanvas {
+    max-width: 100%;
+    height: auto;
     border: 3px solid #00ffff;
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    display: block;
 }
 
 .controls {
-    margin-top: 20px;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .controls button {
-    padding: 10px 20px;
-    font-size: 1rem;
+    padding: 8px 16px;
+    font-size: 0.9rem;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -100,4 +112,47 @@ h1 {
 .controls button:hover {
     background: #444488;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+    
+    .player-info {
+        gap: 10px;
+        font-size: 1rem;
+    }
+    
+    .player-cyan, .player-yellow {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .controls {
+        gap: 8px;
+    }
+    
+    .controls button {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 400px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+    
+    .player-info {
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .player-cyan, .player-yellow {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
 }

@@ -68,9 +68,9 @@ function drawBoard() {
     // CELL_SIZE を計算（canvas が読み込まれた後）
     CELL_SIZE = canvas.width / GRID_SIZE;
 
-    // 背景をクリア
-    ctx.fillStyle = '#0a0a1a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 描画領域をクリア
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // グリッド線を描画
     ctx.strokeStyle = '#333366';
@@ -129,6 +129,8 @@ function drawBoard() {
 
     // 現在の手番とフェーズを表示
     drawInfo();
+    
+    ctx.restore();
 }
 
 // 石を描画（確率に応じたグラデーション）
@@ -414,3 +416,8 @@ mockBtn.addEventListener('click', () => {
 initBoard();
 drawBoard();
 updatePlayerIndicator();
+
+// リサイズ対応
+window.addEventListener('resize', () => {
+    drawBoard();
+});
