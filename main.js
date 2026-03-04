@@ -107,7 +107,7 @@ function drawBoard() {
                     ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
                     ctx.shadowBlur = 50;
                     ctx.strokeStyle = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
-                    ctx.lineWidth = 5;
+                    ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius + 8, 0, Math.PI * 2);
                     ctx.stroke();
@@ -140,16 +140,55 @@ function drawBoard() {
     drawInfo();
     
     ctx.restore();
+
+    // 盤面の枠色を更新
+    updateBoardOutlineColor();
+}
+
+// 盤面の枠色を更新（優勢な色に近づける）
+function updateBoardOutlineColor() {
+    let totalCyan = 0;
+    let totalYellow = 0;
+    
+    for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const cell = board[y][x];
+            if (cell !== EMPTY) {
+                totalCyan += cell.cyan;
+                totalYellow += cell.yellow;
+            }
+        }
+    }
+    
+    const total = totalCyan + totalYellow;
+    if (total === 0) return;
+    
+    const cyanRatio = totalCyan / total;
+    
+    // Cyan: 0, 255, 255
+    // Yellow: 255, 255, 0
+    const r = Math.round(255 * (1 - cyanRatio));
+    const g = 255;
+    const b = Math.round(255 * cyanRatio);
+    
+    const color = `rgb(${r}, ${g}, ${b})`;
+    canvas.style.borderColor = color;
+    canvas.style.boxShadow = `0 0 10px ${color}`;
 }
 
 // 石を描画（確率に応じたグラデーション）
 function drawStone(x, y, radius, cyanValue, yellowValue) {
+    ctx.save();
+    
     // 青と黄のグラデーションを作成
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
     
+    // 確率を5%刻み（0.05単位）に丸める
+    const quantizedCyan = Math.round(cyanValue * 20) / 20;
+    
     // 確率に応じた色を計算（HSL で補間）
     // cyan = HSL(180, 100%, 50%), yellow = HSL(60, 100%, 50%)
-    const hue = 60 + (180 - 60) * cyanValue;
+    const hue = 60 + (180 - 60) * quantizedCyan;
     const stoneColor = `hsl(${hue}, 100%, 50%)`;
     
     gradient.addColorStop(0, stoneColor);
@@ -175,6 +214,8 @@ function drawStone(x, y, radius, cyanValue, yellowValue) {
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
     ctx.stroke();
+    
+    ctx.restore();
 }
 
 // 情報表示
