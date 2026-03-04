@@ -73,8 +73,8 @@ function initBoard(useMockBoard = false) {
             board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-            INTERACTION_COEFFICIENT_P1 = 0.196; // P1 (Cyan) にわずかなブースト
-            INTERACTION_COEFFICIENT_P2 = 0.19;  // P2 (Yellow)
+            INTERACTION_COEFFICIENT_P1 = 0.1956; // P1 (Cyan) Ultra-tuned
+            INTERACTION_COEFFICIENT_P2 = 0.19;   // P2 (Yellow)
         }
     }
 }
