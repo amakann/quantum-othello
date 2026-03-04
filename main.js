@@ -105,11 +105,11 @@ function drawBoard() {
                 if (phase === 1 && canSelectStone(x, y)) {
                     // 選択可能な石の枠線に発光効果
                     ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
-                    ctx.shadowBlur = 30;
+                    ctx.shadowBlur = 50;
                     ctx.strokeStyle = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 5;
                     ctx.beginPath();
-                    ctx.arc(centerX, centerY, radius + 5, 0, Math.PI * 2);
+                    ctx.arc(centerX, centerY, radius + 8, 0, Math.PI * 2);
                     ctx.stroke();
                     ctx.shadowColor = 'transparent';
                     ctx.shadowBlur = 0;
@@ -158,10 +158,10 @@ function drawStone(x, y, radius, cyanValue, yellowValue) {
     // 石の発光効果（プレイヤーの色に応じて）
     if (cyanValue > 0.1) {
         ctx.shadowColor = '#00ffff';
-        ctx.shadowBlur = 20 * cyanValue;
+        ctx.shadowBlur = 40 * cyanValue;
     } else if (yellowValue > 0.1) {
         ctx.shadowColor = '#ffff00';
-        ctx.shadowBlur = 20 * yellowValue;
+        ctx.shadowBlur = 40 * yellowValue;
     }
     
     ctx.beginPath();
