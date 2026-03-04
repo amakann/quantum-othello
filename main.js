@@ -105,7 +105,7 @@ function drawBoard() {
                 if (phase === 1 && canSelectStone(x, y)) {
                     // 選択可能な石の枠線に発光効果
                     ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
-                    ctx.shadowBlur = 15;
+                    ctx.shadowBlur = 30;
                     ctx.strokeStyle = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
                     ctx.lineWidth = 3;
                     ctx.beginPath();
