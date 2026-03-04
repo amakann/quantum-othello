@@ -9,7 +9,8 @@ const GRID_SIZE = 8;
 let CELL_SIZE = 0;
 const INFLUENCE_RADIUS = 5.0;
 // モードごとの係数: Quantum=0.2, Standard=0.19
-let INTERACTION_COEFFICIENT = 0.2;
+let INTERACTION_COEFFICIENT_P1 = 0.2;
+let INTERACTION_COEFFICIENT_P2 = 0.2;
 
 // 定数
 const EMPTY = null;
@@ -64,14 +65,16 @@ function initBoard(useMockBoard = false) {
             board[3][4] = { cyan: 0.5, yellow: 0.5 };
             board[4][3] = { cyan: 0.5, yellow: 0.5 };
             board[4][4] = { cyan: 0.5, yellow: 0.5 };
-            INTERACTION_COEFFICIENT = 0.2; // 量子モード用の係数
+            INTERACTION_COEFFICIENT_P1 = 0.2;
+            INTERACTION_COEFFICIENT_P2 = 0.2;
         } else {
             // 標準モード：通常のオセロと同様
             board[3][3] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
             board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-            INTERACTION_COEFFICIENT = 0.19; // 標準モード用の係数
+            INTERACTION_COEFFICIENT_P1 = 0.196; // P1 (Cyan) にわずかなブースト
+            INTERACTION_COEFFICIENT_P2 = 0.19;  // P2 (Yellow)
         }
     }
 }
@@ -379,7 +382,12 @@ function applyWaveInterference() {
             // 干渉の条件判定：両方の波が届いているマス
             if (i1 > 0 && i2 > 0) {
                 // 色（確率）の変化
-                const delta = (i1 + i2) * INTERACTION_COEFFICIENT;
+                // プレイヤーによって係数を変える
+                const coefficient = player === 'cyan' 
+                    ? INTERACTION_COEFFICIENT_P1 
+                    : INTERACTION_COEFFICIENT_P2;
+                    
+                const delta = (i1 + i2) * coefficient;
                 
                 // 手番プレイヤーの色の確率を更新
                 if (player === 'cyan') {
