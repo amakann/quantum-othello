@@ -146,10 +146,23 @@ function drawStone(x, y, radius, cyanValue, yellowValue) {
     gradient.addColorStop(0, stoneColor);
     gradient.addColorStop(1, '#ffffff');
 
+    // 石の発光効果（プレイヤーの色に応じて）
+    if (cyanValue > 0.1) {
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 10 * cyanValue;
+    } else if (yellowValue > 0.1) {
+        ctx.shadowColor = '#ffff00';
+        ctx.shadowBlur = 10 * yellowValue;
+    }
+    
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
+    
+    // 枠線と影のリセット
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
     ctx.stroke();
