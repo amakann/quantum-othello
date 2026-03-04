@@ -103,11 +103,16 @@ function drawBoard() {
                 
                 // フェーズ 1: 選択可能な石をハイライト
                 if (phase === 1 && canSelectStone(x, y)) {
-                    ctx.strokeStyle = '#00ff00';
+                    // 選択可能な石の枠線に発光効果
+                    ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
+                    ctx.shadowBlur = 15;
+                    ctx.strokeStyle = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
                     ctx.lineWidth = 3;
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius + 5, 0, Math.PI * 2);
                     ctx.stroke();
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
                 }
             } else if (phase === 2) {
                 // フェーズ 2: 空のセルを薄く表示
@@ -122,9 +127,13 @@ function drawBoard() {
     if (phase === 1 && selectedFirstStone) {
         const x = selectedFirstStone.x * CELL_SIZE;
         const y = selectedFirstStone.y * CELL_SIZE;
+        ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
+        ctx.shadowBlur = 20;
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 4;
         ctx.strokeRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
     }
 
     // 現在の手番とフェーズを表示
