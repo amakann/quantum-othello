@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d');
 const GRID_SIZE = 8;
 let CELL_SIZE = 0;
 const INFLUENCE_RADIUS = 5.0;
-const INTERACTION_COEFFICIENT = 0.4;
+const INTERACTION_COEFFICIENT = 0.25;
 
 // 定数
 const EMPTY = null;
@@ -328,6 +328,12 @@ function decayFunction(d, radius) {
 
 // 波の干渉ロジック（コアアルゴリズム）
 function applyWaveInterference() {
+    // フェーズ 1 がスキップされた場合は干渉なし（第 2 波源のみ配置）
+    if (!selectedFirstStone && secondStonePosition) {
+        // 何もしない（ただ石を置いただけ）
+        return;
+    }
+
     if (!selectedFirstStone || !secondStonePosition) return;
 
     // 波源 1: フェーズ 1 で選択した石
@@ -434,6 +440,29 @@ function handleCanvasClick(event) {
                 phase = 1;
                 selectedFirstStone = null;
                 secondStonePosition = null;
+
+                // 次のプレイヤーがフェーズ 1 で選択可能な石があるかチェック
+                let canSelectAny = false;
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    for (let x = 0; x < GRID_SIZE; x++) {
+                        // 空でない、かつ選択可能な色（確率 >= 0.1）
+                        if (board[y][x] !== EMPTY && canSelectStone(x, y)) {
+                            canSelectAny = true;
+                            break;
+                        }
+                    }
+                    if (canSelectAny) break;
+                }
+
+                if (!canSelectAny) {
+                    // 選択可能な石がない場合、フェーズ 1 をスキップ
+                    phase = 2;
+                    // アラートの代わりにコンソールログ（またはUI通知）にする方がUXが良いかもしれないが、
+                    // 一旦分かりやすくアラートで通知
+                    setTimeout(() => {
+                         alert(`${currentPlayer.toUpperCase()} has no selectable stones! Skipping to Phase 2 (Placement only).`);
+                    }, 100);
+                }
                 
                 drawBoard();
                 updatePlayerIndicator();
