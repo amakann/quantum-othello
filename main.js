@@ -56,10 +56,11 @@ function initBoard(useMockBoard = false) {
         }
     } else {
         // 初期配置（通常のオセロと同様に中央 4 マス）
-        board[3][3] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-        board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
-        board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
-        board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
+        // ユーザーの要望により、すべて50%（重ね合わせ状態）で開始
+        board[3][3] = { cyan: 0.5, yellow: 0.5 };
+        board[3][4] = { cyan: 0.5, yellow: 0.5 };
+        board[4][3] = { cyan: 0.5, yellow: 0.5 };
+        board[4][4] = { cyan: 0.5, yellow: 0.5 };
     }
 }
 
