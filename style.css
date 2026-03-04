@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+.game-container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.game-info {
+    margin-bottom: 20px;
+}
+
+.player-info {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    font-size: 1.5rem;
+}
+
+.player-cyan {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+}
+
+.player-yellow {
+    color: #ffff00;
+    text-shadow: 0 0 5px #ffff00;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+}
+
+/* 現在の手番を強調表示 */
+.player-cyan.active {
+    opacity: 1;
+    box-shadow: 0 0 20px #00ffff;
+    border: 2px solid #00ffff;
+}
+
+.player-yellow.active {
+    opacity: 1;
+    box-shadow: 0 0 20px #ffff00;
+    border: 2px solid #ffff00;
+}
+
+.canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameCanvas {
+    border: 3px solid #00ffff;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.controls button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #333366;
+    color: #fff;
+}
+
+.controls button:hover {
+    background: #444488;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>波紋リバーシ (Wave Ripple Reversi)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>波紋リバーシ</h1>
+        <div class="game-info">
+            <div class="player-info">
+                <span class="player-cyan" id="cyanPlayer">青 (Cyan)</span>
+                <span class="player-yellow" id="yellowPlayer">黄 (Yellow)</span>
+            </div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="640" height="640"></canvas>
+        </div>
+        <div class="controls">
+            <button id="resetBtn">リセット (Reset)</button>
+            <button id="mockBtn">モックボード (Mock Board)</button>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
