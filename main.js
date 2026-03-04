@@ -19,6 +19,7 @@ let currentPlayer = 'cyan';
 let phase = 1; // 1: 第 1 波源選択，2: 第 2 波源配置
 let selectedFirstStone = null;
 let secondStonePosition = null; // フェーズ 2 で配置された石の位置
+let startMode = 'quantum'; // 'quantum' (50%) or 'standard' (classic othello)
 
 // 初期化：8x8 の空の盤面を作成
 function initBoard(useMockBoard = false) {
@@ -55,12 +56,20 @@ function initBoard(useMockBoard = false) {
             }
         }
     } else {
-        // 初期配置（通常のオセロと同様に中央 4 マス）
-        // ユーザーの要望により、すべて50%（重ね合わせ状態）で開始
-        board[3][3] = { cyan: 0.5, yellow: 0.5 };
-        board[3][4] = { cyan: 0.5, yellow: 0.5 };
-        board[4][3] = { cyan: 0.5, yellow: 0.5 };
-        board[4][4] = { cyan: 0.5, yellow: 0.5 };
+        // 初期配置
+        if (startMode === 'quantum') {
+            // 量子モード：すべて50%（重ね合わせ状態）
+            board[3][3] = { cyan: 0.5, yellow: 0.5 };
+            board[3][4] = { cyan: 0.5, yellow: 0.5 };
+            board[4][3] = { cyan: 0.5, yellow: 0.5 };
+            board[4][4] = { cyan: 0.5, yellow: 0.5 };
+        } else {
+            // 標準モード：通常のオセロと同様
+            board[3][3] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
+            board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
+            board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
+            board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
+        }
     }
 }
 
@@ -480,8 +489,9 @@ function updatePlayerIndicator() {
 // ボタンイベント
 const resetBtn = document.getElementById('resetBtn');
 const mockBtn = document.getElementById('mockBtn');
+const toggleStartModeBtn = document.getElementById('toggleStartModeBtn');
 
-resetBtn.addEventListener('click', () => {
+function resetGame() {
     initBoard(false);
     currentPlayer = 'cyan';
     phase = 1;
@@ -489,6 +499,19 @@ resetBtn.addEventListener('click', () => {
     secondStonePosition = null;
     updatePlayerIndicator();
     drawBoard();
+}
+
+resetBtn.addEventListener('click', resetGame);
+
+toggleStartModeBtn.addEventListener('click', () => {
+    if (startMode === 'quantum') {
+        startMode = 'standard';
+        toggleStartModeBtn.textContent = '開始モード: 標準 (Start: Standard)';
+    } else {
+        startMode = 'quantum';
+        toggleStartModeBtn.textContent = '開始モード: 量子 (Start: Quantum)';
+    }
+    resetGame();
 });
 
 mockBtn.addEventListener('click', () => {
