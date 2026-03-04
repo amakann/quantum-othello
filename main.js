@@ -305,16 +305,35 @@ function applyWaveInterference() {
     }
 }
 
-// マウスクリックイベント
-canvas.addEventListener('click', (event) => {
+// マウス/タッチクリックイベント
+function getClickCoordinates(event) {
     const rect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    let clientX, clientY;
+    
+    if (event.touches && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+    } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+    }
+    
+    const mouseX = (clientX - rect.left) * scaleX;
+    const mouseY = (clientY - rect.top) * scaleY;
+    
+    return { mouseX, mouseY };
+}
 
+function handleCanvasClick(event) {
+    const { mouseX, mouseY } = getClickCoordinates(event);
+    
     // グリッド座標に変換
     const gridX = Math.floor(mouseX / CELL_SIZE);
     const gridY = Math.floor(mouseY / CELL_SIZE);
-
+    
     // 盤面範囲内かチェック
     if (gridX >= 0 && gridX < GRID_SIZE && gridY >= 0 && gridY < GRID_SIZE) {
         if (phase === 1) {
@@ -354,7 +373,16 @@ canvas.addEventListener('click', (event) => {
             }
         }
     }
-});
+}
+
+// マウスクリックイベント
+canvas.addEventListener('click', handleCanvasClick);
+
+// タッチイベント（モバイル対応）
+canvas.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    handleCanvasClick(event);
+}, { passive: false });
 
 // 観測機能 - 確率状態を収束させて石の色を決定
 function observeBoard() {
