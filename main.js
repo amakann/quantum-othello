@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d');
 const GRID_SIZE = 8;
 let CELL_SIZE = 0;
 const INFLUENCE_RADIUS = 5.0;
-// モードごとの係数: Quantum=0.2, Standard=0.18
+// モードごとの係数: Quantum=0.2, Standard=0.19
 let INTERACTION_COEFFICIENT = 0.2;
 
 // 定数
@@ -71,7 +71,7 @@ function initBoard(useMockBoard = false) {
             board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-            INTERACTION_COEFFICIENT = 0.18; // 標準モード用の係数
+            INTERACTION_COEFFICIENT = 0.19; // 標準モード用の係数
         }
     }
 }
