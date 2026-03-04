@@ -183,12 +183,9 @@ function drawStone(x, y, radius, cyanValue, yellowValue) {
     // 青と黄のグラデーションを作成
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
     
-    // 確率を5%刻み（0.05単位）に丸める
-    const quantizedCyan = Math.round(cyanValue * 20) / 20;
-    
     // 確率に応じた色を計算（HSL で補間）
     // cyan = HSL(180, 100%, 50%), yellow = HSL(60, 100%, 50%)
-    const hue = 60 + (180 - 60) * quantizedCyan;
+    const hue = 60 + (180 - 60) * cyanValue;
     const stoneColor = `hsl(${hue}, 100%, 50%)`;
     
     gradient.addColorStop(0, stoneColor);
