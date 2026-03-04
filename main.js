@@ -365,8 +365,8 @@ function handleCanvasClick(event) {
                 selectedFirstStone = null;
                 secondStonePosition = null;
                 
-                updatePlayerIndicator();
                 drawBoard();
+                updatePlayerIndicator();
                 
                 // 勝者判定
                 checkWinner();

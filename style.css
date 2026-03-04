@@ -56,6 +56,7 @@ h1 {
     padding: 8px 16px;
     border-radius: 8px;
     opacity: 0.5;
+    transition: opacity 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
 }
 
 .player-yellow {
@@ -64,6 +65,7 @@ h1 {
     padding: 8px 16px;
     border-radius: 8px;
     opacity: 0.5;
+    transition: opacity 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
 }
 
 /* 現在の手番を強調表示 */
