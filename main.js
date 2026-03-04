@@ -21,6 +21,10 @@ let selectedFirstStone = null;
 let secondStonePosition = null; // フェーズ 2 で配置された石の位置
 let startMode = 'quantum'; // 'quantum' (50%) or 'standard' (classic othello)
 
+// アニメーション状態
+let isAnimating = false;
+let animationFrameId = null;
+
 // 初期化：8x8 の空の盤面を作成
 function initBoard(useMockBoard = false) {
     board = [];
@@ -48,29 +52,84 @@ function initBoard(useMockBoard = false) {
                 // ランダムに石を配置（約 90% の確率）
                 if (cellCount < targetCells) {
                     const isCyan = Math.random() > 0.5;
-                    board[y][x] = isCyan
-                        ? { cyan: 1.0, yellow: 0.0 }
-                        : { cyan: 0.0, yellow: 1.0 };
+                    const cyanVal = isCyan ? 1.0 : 0.0;
+                    board[y][x] = { 
+                        cyan: cyanVal, 
+                        yellow: 1.0 - cyanVal,
+                        currentCyan: cyanVal, // 現在の表示値（アニメーション用）
+                        targetCyan: cyanVal   // 目標値
+                    };
                     cellCount++;
                 }
             }
         }
     } else {
         // 初期配置
+        const initialVal = startMode === 'quantum' ? 0.5 : 1.0;
+        
+        const setStone = (y, x, cyanVal) => {
+            board[y][x] = {
+                cyan: cyanVal,
+                yellow: 1.0 - cyanVal,
+                currentCyan: cyanVal,
+                targetCyan: cyanVal
+            };
+        };
+
         if (startMode === 'quantum') {
-            // 量子モード：すべて50%（重ね合わせ状態）
-            board[3][3] = { cyan: 0.5, yellow: 0.5 };
-            board[3][4] = { cyan: 0.5, yellow: 0.5 };
-            board[4][3] = { cyan: 0.5, yellow: 0.5 };
-            board[4][4] = { cyan: 0.5, yellow: 0.5 };
+            setStone(3, 3, 0.5);
+            setStone(3, 4, 0.5);
+            setStone(4, 3, 0.5);
+            setStone(4, 4, 0.5);
         } else {
-            // 標準モード：通常のオセロと同様
-            board[3][3] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-            board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
-            board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
-            board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
+            setStone(3, 3, 1.0); // 白
+            setStone(3, 4, 0.0); // 黒
+            setStone(4, 3, 0.0); // 黒
+            setStone(4, 4, 1.0); // 白
         }
     }
+    
+    // アニメーションループを開始
+    if (!animationFrameId) {
+        lastTime = performance.now();
+        animate();
+    }
+}
+
+// アニメーションループ
+let lastTime = 0;
+function animate(currentTime) {
+    const deltaTime = (currentTime - lastTime) / 1000; // 秒単位
+    lastTime = currentTime;
+
+    // 盤面状態の更新（補間）
+    let needsUpdate = false;
+    const speed = 2.0; // 変化の速度
+
+    for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const cell = board[y][x];
+            if (cell !== EMPTY) {
+                // 目標値に向かって少しずつ変化させる
+                const diff = cell.targetCyan - cell.currentCyan;
+                if (Math.abs(diff) > 0.001) {
+                    // 指数関数的な接近 (Ease-out effect)
+                    // または線形補間: cell.currentCyan += Math.sign(diff) * speed * deltaTime;
+                    cell.currentCyan += diff * speed * (deltaTime * 60 || 1) * 0.1;
+                    
+                    // 行き過ぎ防止
+                    if (Math.abs(cell.targetCyan - cell.currentCyan) < 0.001) {
+                        cell.currentCyan = cell.targetCyan;
+                    }
+                    needsUpdate = true;
+                }
+            }
+        }
+    }
+
+    // 常に描画し続ける（UI更新のため）
+    drawBoard();
+    animationFrameId = requestAnimationFrame(animate);
 }
 
 // 盤面を描画
@@ -109,7 +168,8 @@ function drawBoard() {
             const radius = CELL_SIZE / 2 - 5;
 
             if (cell !== EMPTY) {
-                drawStone(centerX, centerY, radius, cell.cyan, cell.yellow);
+                // アニメーション用の現在値を使用
+                drawStone(centerX, centerY, radius, cell.currentCyan, 1.0 - cell.currentCyan);
                 
                 // フェーズ 1: 選択可能な石をハイライト
                 if (phase === 1 && canSelectStone(x, y)) {
@@ -117,7 +177,7 @@ function drawBoard() {
                     ctx.shadowColor = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
                     ctx.shadowBlur = 50;
                     ctx.strokeStyle = currentPlayer === 'cyan' ? '#00ffff' : '#ffff00';
-                    ctx.lineWidth = 2;
+                    ctx.lineWidth = 5;
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius + 8, 0, Math.PI * 2);
                     ctx.stroke();
@@ -338,9 +398,19 @@ function applyWaveInterference() {
 
     // 波源 1: フェーズ 1 で選択した石
     const p1 = selectedFirstStone;
-    const w1 = currentPlayer === 'cyan' 
-        ? board[p1.y][p1.x].cyan 
-        : board[p1.y][p1.x].yellow;
+    let w1 = 0;
+    let player = currentPlayer;
+
+    if (p1) {
+         w1 = player === 'cyan' 
+            ? board[p1.y][p1.x].cyan 
+            : board[p1.y][p1.x].yellow;
+    } else {
+        // Phase 1 skipped, only Phase 2 stone
+        // No interference, but we need to check if there is logic for single source update if desired.
+        // Current logic requires two sources for interference.
+        return;
+    }
 
     // 波源 2: フェーズ 2 で配置した石（100% 自色）
     const w2 = 1.0;
@@ -369,13 +439,16 @@ function applyWaveInterference() {
                 const delta = (i1 + i2) * INTERACTION_COEFFICIENT;
                 
                 // 手番プレイヤーの色の確率を更新
-                if (currentPlayer === 'cyan') {
+                if (player === 'cyan') {
                     cell.cyan = Math.min(1.0, cell.cyan + delta);
                     cell.yellow = 1.0 - cell.cyan;
                 } else {
                     cell.yellow = Math.min(1.0, cell.yellow + delta);
                     cell.cyan = 1.0 - cell.yellow;
                 }
+                
+                // アニメーションの目標値を更新
+                cell.targetCyan = cell.cyan;
             }
         }
     }
@@ -426,11 +499,13 @@ function handleCanvasClick(event) {
                 secondStonePosition = { x: gridX, y: gridY };
                 
                 // 新しい石を配置
-                if (currentPlayer === 'cyan') {
-                    board[gridY][gridX] = { cyan: 1.0, yellow: 0.0 };
-                } else {
-                    board[gridY][gridX] = { cyan: 0.0, yellow: 1.0 };
-                }
+                const newStone = {
+                    cyan: currentPlayer === 'cyan' ? 1.0 : 0.0,
+                    yellow: currentPlayer === 'cyan' ? 0.0 : 1.0,
+                    currentCyan: currentPlayer === 'cyan' ? 1.0 : 0.0, // 新規配置は即座に確定色
+                    targetCyan: currentPlayer === 'cyan' ? 1.0 : 0.0
+                };
+                board[gridY][gridX] = newStone;
                 
                 // 波の干渉ロジックを実行
                 applyWaveInterference();
