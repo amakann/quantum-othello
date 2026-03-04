@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d');
 const GRID_SIZE = 8;
 let CELL_SIZE = 0;
 const INFLUENCE_RADIUS = 5.0;
-const INTERACTION_COEFFICIENT = 0.25;
+const INTERACTION_COEFFICIENT = 0.2;
 
 // 定数
 const EMPTY = null;
