@@ -158,10 +158,10 @@ function drawStone(x, y, radius, cyanValue, yellowValue) {
     // 石の発光効果（プレイヤーの色に応じて）
     if (cyanValue > 0.1) {
         ctx.shadowColor = '#00ffff';
-        ctx.shadowBlur = 10 * cyanValue;
+        ctx.shadowBlur = 20 * cyanValue;
     } else if (yellowValue > 0.1) {
         ctx.shadowColor = '#ffff00';
-        ctx.shadowBlur = 10 * yellowValue;
+        ctx.shadowBlur = 20 * yellowValue;
     }
     
     ctx.beginPath();
