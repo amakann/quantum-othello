@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -82,13 +87,13 @@ h1 {
     align-items: center;
     width: 100%;
     margin-bottom: 15px;
+    padding: 0 10px;
 }
 
 #gameCanvas {
-    max-width: calc(100vw - 40px);
-    max-height: calc(100vh - 300px);
-    width: auto;
+    width: 100%;
     height: auto;
+    max-width: 100%;
     border: 3px solid #00ffff;
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
