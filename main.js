@@ -7,10 +7,10 @@ const ctx = canvas.getContext('2d');
 // ゲーム設定
 const GRID_SIZE = 8;
 let CELL_SIZE = 0;
-const INFLUENCE_RADIUS = 5.0;
-// モードごとの係数: Quantum=0.2, Standard=0.19
-let INTERACTION_COEFFICIENT_P1 = 0.2;
-let INTERACTION_COEFFICIENT_P2 = 0.2;
+const INFLUENCE_RADIUS = 8.0; // Increased from 5.0
+// モードごとの係数: 範囲が広がり条件が緩和されたため、係数を下げてバランスを取る
+let INTERACTION_COEFFICIENT_P1 = 0.1;
+let INTERACTION_COEFFICIENT_P2 = 0.1;
 
 // 定数
 const EMPTY = null;
@@ -65,16 +65,16 @@ function initBoard(useMockBoard = false) {
             board[3][4] = { cyan: 0.5, yellow: 0.5 };
             board[4][3] = { cyan: 0.5, yellow: 0.5 };
             board[4][4] = { cyan: 0.5, yellow: 0.5 };
-            INTERACTION_COEFFICIENT_P1 = 0.2;
-            INTERACTION_COEFFICIENT_P2 = 0.2;
+            INTERACTION_COEFFICIENT_P1 = 0.1;
+            INTERACTION_COEFFICIENT_P2 = 0.1;
         } else {
             // 標準モード：通常のオセロと同様
             board[3][3] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
             board[3][4] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][3] = { cyan: 0.0, yellow: 1.0 }; // 黒（yellow）
             board[4][4] = { cyan: 1.0, yellow: 0.0 }; // 白（cyan）
-            INTERACTION_COEFFICIENT_P1 = 0.1956; // P1 (Cyan) Ultra-tuned
-            INTERACTION_COEFFICIENT_P2 = 0.19;   // P2 (Yellow)
+            INTERACTION_COEFFICIENT_P1 = 0.1;
+            INTERACTION_COEFFICIENT_P2 = 0.1;
         }
     }
 }
@@ -379,8 +379,8 @@ function applyWaveInterference() {
             const i1 = w1 * c1;
             const i2 = w2 * c2;
 
-            // 干渉の条件判定：両方の波が届いているマス
-            if (i1 > 0 && i2 > 0) {
+            // 干渉・影響の適用：どちらかの波が届いていれば影響する（OR条件）
+            if (i1 > 0 || i2 > 0) {
                 // 色（確率）の変化
                 // プレイヤーによって係数を変える
                 const coefficient = player === 'cyan' 
